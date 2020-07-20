@@ -42,8 +42,8 @@ class MyActionListener implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if("开始游戏".equals(e.getActionCommand())) {
             //移除当前界面，跳转至选择关卡界面
-            boundary.frame.remove(boundary);
-            boundary.frame.add(new ChooseLevelBoundary(boundary.frame));
+//            boundary.frame.remove(boundary);
+//            boundary.frame.add(new ChooseLevelBoundary(boundary.frame));
             boundary.frame.setVisible(true);
         }
     }

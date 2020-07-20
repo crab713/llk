@@ -24,8 +24,15 @@ public class Block extends JButton {
     public Block() {
     }
 
-    public void delete(){
+    /**
+     * 更新方块坐标
+     */
+    public void update(){
+        setLocation(80+ level.BLOCK_WIDTH *mapX,80+ level.BLOCK_HEIGHT *mapY);
+    }
 
+    public void delete(){
+        // TODO : 消除方块并且更新level.map里对应坐标的id为0
     }
 
     public boolean isConnect(Block block){

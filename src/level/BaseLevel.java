@@ -21,8 +21,8 @@ import java.util.TimerTask;
 import java.util.Timer;
 
 public class BaseLevel extends JPanel {
-    public final static int BLOCK_WIDTH=50;
-    public final static int BLOCK_HEIGHT=50;
+    public int BLOCK_WIDTH=50;
+    public int BLOCK_HEIGHT=50;
 
     JFrame frame;
     public Block block;
@@ -154,7 +154,7 @@ public class BaseLevel extends JPanel {
                     }
                     notCreate[index]--;
                     block.setSize(BLOCK_WIDTH, BLOCK_HEIGHT);
-                    update(block);
+                    block.update();
                     block.setIcon(new ImageIcon(background.getScaledInstance(BLOCK_WIDTH,BLOCK_HEIGHT,Image.SCALE_DEFAULT)));
                     map[i][j]=index;
                     blocks.add(block);
@@ -165,13 +165,7 @@ public class BaseLevel extends JPanel {
         }
     }
 
-    /**
-     * 更新方块坐标
-     * @param block 要更新坐标的方块
-     */
-    public void update(Block block){
-        block.setLocation(80+BLOCK_WIDTH*block.getMapX(),80+BLOCK_HEIGHT*block.getMapY());
-    }
+
 
     public void gameOver(){
         // TODO : 结束关卡，进入关卡结算界面
