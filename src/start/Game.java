@@ -1,6 +1,7 @@
 package start;
 
 import level.BaseLevel;
+import level.level1;
 
 import javax.swing.*;
 
@@ -12,7 +13,7 @@ public class Game extends JFrame {
         super("flying shoot");
         setSize(WIDTH,HEIGHT);
 
-        BaseLevel baseLevel = new BaseLevel(this);
+        BaseLevel baseLevel = new level1(this);
         add(baseLevel);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

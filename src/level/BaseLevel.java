@@ -21,16 +21,16 @@ import java.util.TimerTask;
 import java.util.Timer;
 
 public class BaseLevel extends JPanel {
-    public final static int BLOCK_WIDTH=1;
-    public final static int BLOCK_HEIGHT=1;
+    public final static int BLOCK_WIDTH=50;
+    public final static int BLOCK_HEIGHT=50;
 
     JFrame frame;
-    Block block;
-    ArrayList<Block> blocks=new ArrayList<>();
+    public Block block;
+    public ArrayList<Block> blocks=new ArrayList<>();
     Timer timer;
     int time=120*1000;
-    int surplusTime=time;
-    int[][] map={
+    public int surplusTime=time;
+    public int[][] map={
             {0,0,0,0,0,0,0,0},
             {0,1,1,1,1,1,1,0},
             {0,1,1,1,1,1,1,0},
@@ -44,14 +44,14 @@ public class BaseLevel extends JPanel {
     JLabel scoreLabel;
 
     private static BufferedImage background;
-    static BufferedImage[] blockImages=new BufferedImage[0];
-
+//    static BufferedImage[] blockImages=new BufferedImage[0];
+    // TODO : 图片资源
     static {
         try {
             background = ImageIO.read(new File("images/level/background.jpg"));
-            for(int i=0;i<blockImages.length;i++){
-                blockImages[i] = ImageIO.read(new File("images/block/block"+i+".png"));
-            }
+//            for(int i=0;i<blockImages.length;i++){
+//                blockImages[i] = ImageIO.read(new File("images/block/block"+i+".png"));
+//            }
         }catch (Exception var1){
             var1.printStackTrace();
         }
@@ -118,7 +118,7 @@ public class BaseLevel extends JPanel {
 
     /**
      *
-     * @param blockKind 多少种图片
+     * @param blockKind 多少种图片,需在子类关卡构造函数中调用
      * @throws Exception 奇数方块
      */
     public void initBlock(int blockKind) throws Exception {
@@ -154,15 +154,14 @@ public class BaseLevel extends JPanel {
                     }
                     notCreate[index]--;
                     block.setSize(BLOCK_WIDTH, BLOCK_HEIGHT);
-                    block.setIcon(new ImageIcon(blockImages[index].getScaledInstance(BLOCK_WIDTH,BLOCK_HEIGHT,Image.SCALE_DEFAULT)));
+                    update(block);
+                    block.setIcon(new ImageIcon(background.getScaledInstance(BLOCK_WIDTH,BLOCK_HEIGHT,Image.SCALE_DEFAULT)));
                     map[i][j]=index;
                     blocks.add(block);
+                    add(block);
+                    System.out.println(block.getX()+" "+block.getY());
                 }
             }
-        }
-        for(Block block : blocks){
-            update(block);
-            add(block);
         }
     }
 
@@ -171,11 +170,11 @@ public class BaseLevel extends JPanel {
      * @param block 要更新坐标的方块
      */
     public void update(Block block){
-        block.setLocation(80+BLOCK_WIDTH*block.getX(),80+BLOCK_HEIGHT*block.getY());
+        block.setLocation(80+BLOCK_WIDTH*block.getMapX(),80+BLOCK_HEIGHT*block.getMapY());
     }
 
     public void gameOver(){
-
+        // TODO : 结束关卡，进入关卡结算界面
     }
 
     @Override

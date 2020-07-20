@@ -10,19 +10,18 @@ import java.awt.event.MouseEvent;
 public class Block extends JButton {
     BaseLevel level;
 
-    int x;
-    int y;
+    int mapX;
+    int mapY;
 
     public Block(BaseLevel level,int x,int y) {
+        super();
         this.level = level;
-        this.x = x;
-        this.y = y;
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-            }
-        });
+        this.mapX = x;
+        this.mapY = y;
+        addMouseListener(new MyMouseAdapter(this));
+    }
+
+    public Block() {
     }
 
     public void delete(){
@@ -36,5 +35,32 @@ public class Block extends JButton {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+    }
+
+    public int getMapX() {
+        return mapX;
+    }
+
+    public void setMapX(int mapX) {
+        this.mapX = mapX;
+    }
+
+    public int getMapY() {
+        return mapY;
+    }
+
+    public void setMapY(int mapY) {
+        this.mapY = mapY;
+    }
+}
+
+class MyMouseAdapter extends MouseAdapter {
+    Block block;
+    MyMouseAdapter(Block block){
+        this.block = block;
+    }
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        super.mouseClicked(e);
     }
 }
