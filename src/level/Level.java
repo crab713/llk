@@ -22,17 +22,18 @@ import java.util.TimerTask;
 import java.util.Timer;
 
 public class Level extends JPanel {
-    public int BLOCK_WIDTH=40;
-    public int BLOCK_HEIGHT=40;
-    public int startX=0;
-    public int startY=40;
+    public static int BLOCK_WIDTH=40;
+    public static int BLOCK_HEIGHT=40;
+    public static int startX=0;
+    public static int startY=40;
 
     JFrame frame;
     public Block block;
     public ArrayList<Block> blocks=new ArrayList<>();
     Timer timer;
-    int time=120*1000;
-    public int surplusTime=time;
+    int time=120*1000; //初始时长
+    public int surplusTime=time; //剩余时长
+    public int totalTime=0; //总共花费的时长
     public int[][] map;
 
     public int level;
@@ -105,7 +106,12 @@ public class Level extends JPanel {
         surplus.setText("剩余方块： "+blocks.size());
         add(surplus);
 
-        map = LevelData.map[level-1];
+        map = new int[LevelData.map[0].length][LevelData.map[0][0].length];
+        for(int i=0;i<map.length;i++)
+            for (int j=0;j<map[0].length;j++){
+                map[i][j]=LevelData.map[level-1][i][j];
+            }
+
         try {
             initBlock(LevelData.initBlockKind[level-1]);
         }catch (Exception e){
@@ -136,7 +142,7 @@ public class Level extends JPanel {
      * @param blockKind 多少种图片,需在子类关卡构造函数中调用
      * @throws Exception 奇数方块
      */
-    public void initBlock(int blockKind) throws Exception {
+    public void initBlock(int blockKind,int ...propAmount) throws Exception {
         Random random=new Random();
         int n=0;
         for (int[] a : map) {
@@ -149,15 +155,6 @@ public class Level extends JPanel {
             throw new Exception("can not init block");
         }
         // todo : 道具入图
-        for(int i=0;i<2;i++){
-            int x=random.nextInt(map[0].length);
-            int y=random.nextInt(map.length);
-            while (map[y][x] != 1){
-                x=random.nextInt(map[0].length);
-                y=random.nextInt(map.length);
-            }
-            Boom boom=new Boom(this);
-        }
 
         int[] notCreate = new int[blockKind];
         int i=0;
@@ -188,7 +185,6 @@ public class Level extends JPanel {
             }
         }
     }
-
 
 
     public void gameOver(){

@@ -41,4 +41,8 @@ public class BaseProp {
     public void setCount(int count) {
         this.count = count;
     }
+
+    public void addCount(){
+        count++;
+    }
 }

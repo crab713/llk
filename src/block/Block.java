@@ -1,11 +1,15 @@
 package block;
 
 import level.Level;
+import level.LevelData;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 public class Block extends JButton {
@@ -13,6 +17,10 @@ public class Block extends JButton {
 
     int mapX;
     int mapY;
+
+    int addTime=101;
+    int boom=102;
+    int refresh=103;
 
     public Block(Level level, int x, int y) {
         super();
@@ -29,7 +37,7 @@ public class Block extends JButton {
      * 更新方块坐标
      */
     public void update(){
-        setLocation(level.startX+level.BLOCK_WIDTH *mapX,level.startY+level.BLOCK_HEIGHT *mapY);
+        setLocation(Level.startX + Level.BLOCK_WIDTH *mapX, Level.startY + Level.BLOCK_HEIGHT *mapY);
     }
 
     public void delete(){
@@ -42,13 +50,52 @@ public class Block extends JButton {
         }
     }
 
-    public boolean isConnect(Block block){
-        return true;
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+    }
+
+    public void drawConnect(int state,int x,int y){
+
+    }
+
+    public boolean isConnect(int[][] copyMap,int beforeX,int beforeY,int x,int y,int inflection){
+        if(x==mapX && y==mapY){
+            return true;
+        }
+        if(y>copyMap.length-1 || y<0 || x>copyMap[0].length-1 || x<0){
+            return false;
+        }
+        if(copyMap[y][x] == 0){
+            copyMap[y][x] = -1;
+            if(beforeX == x){
+                if(inflection<=1 && isConnect(copyMap,x,y,x+1,y,inflection+(beforeY==y?0:1))){
+                    return true;
+                }else if(inflection<=1 && isConnect(copyMap,x,y,x-1,y,inflection+(beforeY==y?0:1))){
+                    return true;
+                }else if(inflection<=2 && beforeY != y+1 && isConnect(copyMap,x,y,x,y+1,inflection)){
+                    return true;
+                }else if(inflection<=2 && beforeY != y-1 && isConnect(copyMap,x,y,x,y-1,inflection)){
+                    return true;
+                }else {
+                    copyMap[y][x]=0;
+                }
+            }
+            if(beforeY == y){
+                if(inflection<=2 && beforeX != x+1 && isConnect(copyMap,x,y,x+1,y,inflection)){
+                    return true;
+                }else if(inflection<=2 && beforeX != x-1 && isConnect(copyMap,x,y,x-1,y,inflection)){
+                    return true;
+                }else if(inflection<=1 && isConnect(copyMap,x,y,x,y+1,inflection+(beforeX==x?0:1))){
+                    return true;
+                }else if(inflection<=1 && isConnect(copyMap,x,y,x,y-1,inflection+(beforeX==x?0:1))){
+                    return true;
+                }else {
+                    copyMap[y][x]=0;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -102,16 +149,37 @@ class MyMouseAdapter extends MouseAdapter {
                 block.setEnabled(true);
                 return;
             }
-            if(block.isConnect(block.level.block)){
+            int secondX=block.level.block.mapX;
+            int secondY=block.level.block.mapY;
+            int[][] CopyMap = new int[LevelData.map[0].length][LevelData.map[0][0].length];
+            for(int i=0;i<CopyMap.length;i++)
+                for (int j=0;j<CopyMap[0].length;j++){
+                    CopyMap[i][j]=block.level.map[i][j];
+                }
+            CopyMap[secondY][secondX]=0;
+            if(block.level.map[block.mapY][block.mapX] == block.level.map[secondY][secondX])
+                if(block.isConnect(CopyMap,secondX,secondY,secondX,secondY,0)){
                 //两个都删
                 block.level.score += 10;
+                if(block.level.map[block.mapY][block.mapX] == 101){
+                    block.level.addTime.addCount();
+                }
+                if(block.level.map[block.mapY][block.mapX] == 102){
+                    block.level.boom.addCount();
+                }
+                if(block.level.map[block.mapY][block.mapX] == 103){
+                    block.level.refresh.addCount();
+                }
                 block.level.block.delete();
                 block.delete();
             }else {
                 block.level.block.setEnabled(true);
                 block.level.block = null;
             }
+            for(int[] a: CopyMap){
+                System.out.println(Arrays.toString(a));
+            }
+            System.out.println();
         }
-
     }
 }
