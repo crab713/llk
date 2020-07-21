@@ -4,7 +4,7 @@ import java.io.*;
 import java.sql.Struct;
 
 public class RankIOUtil {
-    private static File file = new File("src/level.txt");
+    private static File file = new File("src/level/levelScore.txt");
     /**
      * 读取某一关的最高分数
      * @param level 要读取的关卡数据
@@ -44,7 +44,7 @@ public class RankIOUtil {
                 scores[i] = reader.readLine();
             }
             scores[level-1]=String.valueOf(score);
-            FileWriter fileWriter = new FileWriter(file.getName());
+            FileWriter fileWriter = new FileWriter(file.getPath());
             for(String string : scores){
                 fileWriter.write(string+'\n');
             }

@@ -6,6 +6,7 @@ import prop.AddTime;
 import prop.Boom;
 import prop.Refresh;
 import start.Game;
+import utils.RankIOUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,7 +25,7 @@ public class Level extends JPanel {
     public int BLOCK_WIDTH=40;
     public int BLOCK_HEIGHT=40;
     public int startX=0;
-    public int startY=0;
+    public int startY=40;
 
     JFrame frame;
     public Block block;
@@ -32,14 +33,18 @@ public class Level extends JPanel {
     Timer timer;
     int time=120*1000;
     public int surplusTime=time;
-    // TODO : 另起一个三维数组，存放所有地图之后调用
     public int[][] map;
 
+    public int level;
     public int score=0;
     JLabel scoreLabel;
+    public Boom boom;
+    public Refresh refresh;
+    public AddTime addTime;
 
     private static BufferedImage background;
     static BufferedImage[] blockImages=new BufferedImage[1];
+    static BufferedImage timeImage;
     // TODO : 图片资源
     static {
         try {
@@ -47,6 +52,7 @@ public class Level extends JPanel {
             for(int i=0;i<blockImages.length;i++){
                 blockImages[i] = ImageIO.read(new File("images/block/block"+i+".jpg"));
             }
+            timeImage = ImageIO.read(new File("images/level/time.png"));
         }catch (Exception var1){
             var1.printStackTrace();
         }
@@ -60,6 +66,7 @@ public class Level extends JPanel {
     public Level(JFrame frame, int level) {
         super(null);
         this.frame = frame;
+        this.level = level;
 
         // 得分栏
         scoreLabel = new JLabel();
@@ -70,9 +77,9 @@ public class Level extends JPanel {
         add(scoreLabel);
 
         // 道具栏
-        Boom boom=new Boom(this);
-        AddTime addTime=new AddTime(this);
-        Refresh refresh=new Refresh(this);
+        boom=new Boom(this);
+        addTime=new AddTime(this);
+        refresh=new Refresh(this);
         PropsColumn propsColumn = new PropsColumn(boom,addTime,refresh);
         add(propsColumn);
 
@@ -90,7 +97,7 @@ public class Level extends JPanel {
         add(label);
         JLabel countdown = new JLabel();
         countdown.setBounds(100,510,500,20);
-        countdown.setIcon(new ImageIcon(background));
+        countdown.setIcon(new ImageIcon(timeImage.getScaledInstance(500,20,Image.SCALE_DEFAULT)));
         add(countdown);
         JLabel surplus = new JLabel();
         surplus.setBounds(620,500,120,35);
@@ -130,6 +137,7 @@ public class Level extends JPanel {
      * @throws Exception 奇数方块
      */
     public void initBlock(int blockKind) throws Exception {
+        Random random=new Random();
         int n=0;
         for (int[] a : map) {
             for (int b : a) {
@@ -140,6 +148,17 @@ public class Level extends JPanel {
         if(n%2 != 0){
             throw new Exception("can not init block");
         }
+        // todo : 道具入图
+        for(int i=0;i<2;i++){
+            int x=random.nextInt(map[0].length);
+            int y=random.nextInt(map.length);
+            while (map[y][x] != 1){
+                x=random.nextInt(map[0].length);
+                y=random.nextInt(map.length);
+            }
+            Boom boom=new Boom(this);
+        }
+
         int[] notCreate = new int[blockKind];
         int i=0;
         while (n > 0){
@@ -150,10 +169,9 @@ public class Level extends JPanel {
 
         // 随机分配序号，坐标，入list
         int index;
-        Random random=new Random();
         for(i=0;i<map.length;i++){
             for(int j=0;j<map[0].length;j++){
-                if(map[i][j] != 0){
+                if(map[i][j] == 1){
                     Block block = new Block(this,j,i);
                     index = random.nextInt(blockKind);
                     while(notCreate[index] <= 0){
@@ -174,9 +192,11 @@ public class Level extends JPanel {
 
 
     public void gameOver(){
-        // TODO : 结束关卡，进入关卡结算界面
         frame.remove(this);
         timer.cancel();
+        if(score > RankIOUtil.readOneLevel(level)){
+            RankIOUtil.writeOneLevel(level,score);
+        }
         frame.add(new GameOverBoundary(frame,score));
         frame.setVisible(true);
     }

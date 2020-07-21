@@ -16,7 +16,7 @@ public class StartBoundary extends BaseBoundary {
 
 	public StartBoundary(JFrame frame) {
 		super(frame);
-		background = new ImageIcon("images/bg.png");
+		background = new ImageIcon("images/background/bg.png");
 		block1 = new ImageIcon("images/block1.png");
 		block2 = new ImageIcon("images/block2.png");
 		block3 = new ImageIcon("images/block3.png");

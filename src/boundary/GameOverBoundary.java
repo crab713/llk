@@ -6,8 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import boundary.History.Mylisener;
-
 public class GameOverBoundary extends BaseBoundary{
 	ImageIcon block4;
 	JButton back;
@@ -25,12 +23,12 @@ public class GameOverBoundary extends BaseBoundary{
 		Image temp = block4.getImage().getScaledInstance(250, 200, Image.SCALE_DEFAULT);
 		block4 = new ImageIcon(temp);
 		back.setIcon(block4);
-		back.addActionListener(new Mylisener(this));
+		back.addActionListener(new MyListener(this));
 		add(back);
     }
-    class Mylisener implements ActionListener{
+    static class MyListener implements ActionListener{
     	BaseBoundary boundary;
-    	public Mylisener(BaseBoundary boundary) {
+    	public MyListener(BaseBoundary boundary) {
     		this.boundary = boundary;
     	}
 

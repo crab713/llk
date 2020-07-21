@@ -10,7 +10,7 @@ public class MusicStuff {
     Clip clip;
 
     /**
-     *
+     * 循环播放音乐
      * @param musicLocation 音乐路径，只能wav
      */
     public void play(String musicLocation) {
@@ -22,6 +22,25 @@ public class MusicStuff {
                 clip.open(audioInput);
                 clip.start();
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * 只播放一遍音乐
+     * @param musicLocation 音乐路径，只能wav
+     */
+    public void playOnce(String musicLocation){
+        try {
+            File musicPath = new File(musicLocation);
+            if(musicPath.exists()) {
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                clip = AudioSystem.getClip();
+                clip.open(audioInput);
+                clip.start();
             }
         }
         catch(Exception ex) {

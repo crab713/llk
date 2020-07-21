@@ -12,7 +12,7 @@ public class History extends BaseBoundary {
 
 	public History(JFrame frame) {
 		super(frame);
-		block6 = new ImageIcon("images/history_bg.jpg");
+		block6 = new ImageIcon("images/background/history_bg.jpg");
 		block4 = new ImageIcon("images/block4.png");
 		back = new JButton("返回");
 		back.setBounds(0, 0, 80, 40);
