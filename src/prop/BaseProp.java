@@ -1,16 +1,16 @@
 package prop;
 
-import level.BaseLevel;
+import level.Level;
 
 import java.awt.image.BufferedImage;
 
 public class BaseProp {
-    BaseLevel level;
+    Level level;
     BufferedImage image;
     String name;
     int count=10;
 
-    public BaseProp(BaseLevel level) {
+    public BaseProp(Level level) {
         this.level = level;
     }
 

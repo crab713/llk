@@ -1,16 +1,24 @@
 package prop;
 
 import block.Block;
-import level.BaseLevel;
+import level.Level;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.util.Random;
 
 /**
  * 重列道具 ： 重新排列剩下的方块
  */
 public class Refresh extends BaseProp {
-    public Refresh(BaseLevel level) {
+    public Refresh(Level level) {
         super(level);
+        name = "重列";
+        try {
+            image = ImageIO.read(new File("images/background/Background01.jpg"));
+        }catch (Exception var1){
+            var1.printStackTrace();
+        }
     }
 
     @Override

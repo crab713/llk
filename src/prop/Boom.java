@@ -1,8 +1,10 @@
 package prop;
 
 import block.Block;
-import level.BaseLevel;
+import level.Level;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.util.Random;
 
 /**
@@ -10,8 +12,14 @@ import java.util.Random;
  */
 public class Boom extends BaseProp {
 
-    public Boom(BaseLevel level) {
+    public Boom(Level level) {
         super(level);
+        name = "炸弹";
+        try {
+            image = ImageIO.read(new File("images/background/Background01.jpg"));
+        }catch (Exception var1){
+            var1.printStackTrace();
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ public class BaseBoundary extends JPanel {
     JFrame frame;
 
     public BaseBoundary(JFrame frame) {
+        super(null);
         this.frame = frame;
     }
 

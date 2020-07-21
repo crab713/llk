@@ -1,8 +1,10 @@
 package level;
 
 import block.Block;
-import boundary.BaseBoundary;
-import prop.BaseProp;
+import boundary.GameOverBoundary;
+import prop.AddTime;
+import prop.Boom;
+import prop.Refresh;
 import start.Game;
 
 import javax.imageio.ImageIO;
@@ -11,8 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -20,9 +20,11 @@ import java.util.Random;
 import java.util.TimerTask;
 import java.util.Timer;
 
-public class BaseLevel extends JPanel {
-    public int BLOCK_WIDTH=50;
-    public int BLOCK_HEIGHT=50;
+public class Level extends JPanel {
+    public int BLOCK_WIDTH=40;
+    public int BLOCK_HEIGHT=40;
+    public int startX=0;
+    public int startY=0;
 
     JFrame frame;
     public Block block;
@@ -30,34 +32,32 @@ public class BaseLevel extends JPanel {
     Timer timer;
     int time=120*1000;
     public int surplusTime=time;
-    public int[][] map={
-            {0,0,0,0,0,0,0,0},
-            {0,1,1,1,1,1,1,0},
-            {0,1,1,1,1,1,1,0},
-            {0,1,1,1,1,1,1,0},
-            {0,1,1,1,1,1,1,0},
-            {0,1,1,1,1,1,1,0},
-            {0,0,0,0,0,0,0,0}
-    };
+    // TODO : 另起一个三维数组，存放所有地图之后调用
+    public int[][] map;
 
-    int score=0;
+    public int score=0;
     JLabel scoreLabel;
 
     private static BufferedImage background;
-//    static BufferedImage[] blockImages=new BufferedImage[0];
+    static BufferedImage[] blockImages=new BufferedImage[1];
     // TODO : 图片资源
     static {
         try {
-            background = ImageIO.read(new File("images/level/background.jpg"));
-//            for(int i=0;i<blockImages.length;i++){
-//                blockImages[i] = ImageIO.read(new File("images/block/block"+i+".png"));
-//            }
+            background = ImageIO.read(new File("images/background/Background01.jpg"));
+            for(int i=0;i<blockImages.length;i++){
+                blockImages[i] = ImageIO.read(new File("images/block/block"+i+".jpg"));
+            }
         }catch (Exception var1){
             var1.printStackTrace();
         }
     }
 
-    public BaseLevel(JFrame frame) {
+    /**
+     *
+     * @param frame 主窗体
+     * @param level 要运行的关卡
+     */
+    public Level(JFrame frame, int level) {
         super(null);
         this.frame = frame;
 
@@ -70,10 +70,10 @@ public class BaseLevel extends JPanel {
         add(scoreLabel);
 
         // 道具栏
-        BaseProp prop=new BaseProp(this);
-        prop.setImage(background);
-        prop.setName("hello");
-        PropsColumn propsColumn = new PropsColumn(prop);
+        Boom boom=new Boom(this);
+        AddTime addTime=new AddTime(this);
+        Refresh refresh=new Refresh(this);
+        PropsColumn propsColumn = new PropsColumn(boom,addTime,refresh);
         add(propsColumn);
 
         // 退出游戏
@@ -98,6 +98,12 @@ public class BaseLevel extends JPanel {
         surplus.setText("剩余方块： "+blocks.size());
         add(surplus);
 
+        map = LevelData.map[level-1];
+        try {
+            initBlock(LevelData.initBlockKind[level-1]);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         // 计时器任务
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -109,11 +115,13 @@ public class BaseLevel extends JPanel {
                 }else {
                     countdown.setSize(500,20);
                 }
-
                 surplus.setText("剩余方块： "+blocks.size());
-
+                scoreLabel.setText("得分： "+score);
+                if (surplusTime<=0 || blocks.size()==0){
+                    gameOver();
+                }
             }
-        },0L,1L);
+        },100L,1L);
     }
 
     /**
@@ -130,7 +138,6 @@ public class BaseLevel extends JPanel {
             }
         }
         if(n%2 != 0){
-            System.out.println("can not init block");
             throw new Exception("can not init block");
         }
         int[] notCreate = new int[blockKind];
@@ -155,11 +162,10 @@ public class BaseLevel extends JPanel {
                     notCreate[index]--;
                     block.setSize(BLOCK_WIDTH, BLOCK_HEIGHT);
                     block.update();
-                    block.setIcon(new ImageIcon(background.getScaledInstance(BLOCK_WIDTH,BLOCK_HEIGHT,Image.SCALE_DEFAULT)));
-                    map[i][j]=index;
+                    block.setIcon(new ImageIcon(blockImages[index].getScaledInstance(BLOCK_WIDTH,BLOCK_HEIGHT,Image.SCALE_DEFAULT)));
+                    map[i][j]=index+1;
                     blocks.add(block);
                     add(block);
-                    System.out.println(block.getX()+" "+block.getY());
                 }
             }
         }
@@ -169,20 +175,24 @@ public class BaseLevel extends JPanel {
 
     public void gameOver(){
         // TODO : 结束关卡，进入关卡结算界面
+        frame.remove(this);
+        timer.cancel();
+        frame.add(new GameOverBoundary(frame,score));
+        frame.setVisible(true);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-//        g.drawImage(image,0,40,Game.WIDTH,Game.HEIGHT,null);
+        g.drawImage(background,0,40,Game.WIDTH,Game.HEIGHT-40,null);
     }
 
     /**
      * 退出游戏按钮事件监听
      */
     private class MyButtonAction implements ActionListener {
-        BaseLevel level;
-        MyButtonAction(BaseLevel level){
+        Level level;
+        MyButtonAction(Level level){
             super();
             this.level = level;
         }
@@ -191,7 +201,7 @@ public class BaseLevel extends JPanel {
         public void actionPerformed(ActionEvent actionEvent) {
             frame.remove(level);
             level.timer.cancel();
-            frame.add(new BaseBoundary(frame));
+            frame.add(new GameOverBoundary(frame,score));
             frame.setVisible(true);
         }
     }
