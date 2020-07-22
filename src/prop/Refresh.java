@@ -2,6 +2,7 @@ package prop;
 
 import block.Block;
 import level.Level;
+import start.Game;
 import utils.MusicStuff;
 
 import javax.imageio.ImageIO;
@@ -12,6 +13,7 @@ import java.util.Random;
  * 重列道具 ： 重新排列剩下的方块
  */
 public class Refresh extends BaseProp {
+    MusicStuff MS=new MusicStuff();
     public Refresh(Level level) {
         super(level);
         name = "重列";
@@ -26,8 +28,9 @@ public class Refresh extends BaseProp {
     public void run() {
         super.run();
         Random random=new Random();
-        MusicStuff MS=new MusicStuff();
-        MS.playOnce("music/Refresh.wav");
+        if(Game.isPlay){
+            MS.playOnce("music/Refresh.wav");
+        }
         for(int i=0;i<level.blocks.size();i++){
             Block block1 = level.blocks.get(random.nextInt(level.blocks.size()));
             Block block2 = level.blocks.get(random.nextInt(level.blocks.size()));

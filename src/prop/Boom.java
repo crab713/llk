@@ -2,6 +2,7 @@ package prop;
 
 import block.Block;
 import level.Level;
+import start.Game;
 import utils.MusicStuff;
 
 import javax.imageio.ImageIO;
@@ -12,7 +13,7 @@ import java.util.Random;
  * “炸弹”道具:消除两个相同的block
  */
 public class Boom extends BaseProp {
-
+    MusicStuff MS=new MusicStuff();
     public Boom(Level level) {
         super(level);
         name = "炸弹";
@@ -37,8 +38,9 @@ public class Boom extends BaseProp {
             if(level.map[block.getMapY()][block.getMapX()] == level.map[block1.getMapY()][block1.getMapX()]){
                 block.delete();
                 block1.delete();
-                MusicStuff MS=new MusicStuff();
-                MS.playOnce("music/Boom.wav");
+                if(Game.isPlay){
+                    MS.playOnce("music/Boom.wav");
+                }
                 return;
             }
         }

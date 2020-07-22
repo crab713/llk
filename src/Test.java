@@ -1,9 +1,20 @@
+import utils.MusicStuff;
 import utils.RankIOUtil;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Test {
 
     public static void main(String[] args) {
-//        RankIOUtil.writeOneLevel(4,200);
-        System.out.println(5==5?3:2);
+
+        MusicStuff musicStuff=new MusicStuff();
+        Timer timer=new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                musicStuff.playOnce("music/refresh.wav");
+            }
+        },0,400);
     }
 }

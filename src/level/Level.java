@@ -35,7 +35,8 @@ public class Level extends JPanel {
     Timer timer;
     final int time=120*1000; //初始时长
     public int surplusTime=time; //剩余时长
-    public int totalTime=0; //总共花费的时长
+    public int scoreTime =0; //两次消除间过去的时长
+    public int scoreLevel=1; //得分级数，基于连击
     public int[][] map;
 
     public int level;
@@ -128,7 +129,7 @@ public class Level extends JPanel {
             @Override
             public void run() {
                 surplusTime-=10;
-                totalTime+=10;
+                scoreTime +=10;
                 if (surplusTime <= time){
                     countdown.setSize(500*surplusTime/time,20);
                 }else {
@@ -136,11 +137,11 @@ public class Level extends JPanel {
                 }
                 surplus.setText("剩余方块： "+blocks.size());
                 scoreLabel.setText("得分： "+score);
+                propsColumn.updateColumn();
                 repaint();
                 if (surplusTime<=0 || blocks.size()==0){
                     gameOver();
                 }
-
             }
         },100L,10L);
     }
@@ -150,7 +151,7 @@ public class Level extends JPanel {
      * @param blockKind 多少种图片,需在子类关卡构造函数中调用
      * @throws Exception 奇数方块
      */
-    public void initBlock(int blockKind,int ...propAmount) throws Exception {
+    public void initBlock(int blockKind) throws Exception {
         Random random=new Random();
         int n=0;
         for (int[] a : map) {
@@ -162,8 +163,11 @@ public class Level extends JPanel {
         if(n%2 != 0){
             throw new Exception("can not init block");
         }
-        // todo : 道具入图
 
+        initSpecialBlock(Block.ADD_TIME,2);
+        initSpecialBlock(Block.BOOM,2);
+        initSpecialBlock(Block.REFRESH,2);
+        n -=6;
         int[] notCreate = new int[blockKind];
         int i=0;
         while (n > 0){
@@ -194,6 +198,60 @@ public class Level extends JPanel {
         }
     }
 
+    private void initSpecialBlock(int index,int amount){
+        Random random=new Random();
+        int x=random.nextInt(map[0].length);
+        int y=random.nextInt(map.length);
+        for(int i=0;i<amount;i++){
+            while (map[y][x] != 1){
+                x=random.nextInt(map[0].length);
+                y=random.nextInt(map.length);
+            }
+            Block block = new Block(this,x,y);
+            block.setSize(BLOCK_WIDTH, BLOCK_HEIGHT);
+            block.update();
+            BufferedImage image = null;
+            switch (index){
+                case Block.ADD_TIME:image=addTime.getImage();break;
+                case Block.BOOM:image=boom.getImage();break;
+                case Block.REFRESH:image=refresh.getImage();break;
+                default:
+                    image=blockImages[0];
+                    index=1;
+                    break;
+            }
+            block.setIcon(new ImageIcon(image.getScaledInstance(BLOCK_WIDTH,BLOCK_HEIGHT,Image.SCALE_DEFAULT)));
+            map[y][x] = index;
+            blocks.add(block);
+            add(block);
+        }
+    }
+
+    /**
+     *  判断场上是否还有方块可以消除
+     * @return boolean
+     */
+    public boolean checkConnection() {
+        for (int i = 0; i < blocks.size(); i++)
+            for (int j = i + 1; j < blocks.size(); j++) {
+                int X = blocks.get(j).getMapX();
+                int Y = blocks.get(j).getMapY();
+                int secondX = blocks.get(i).getMapX();
+                int secondY = blocks.get(i).getMapY();
+                int[][] CopyMap = new int[LevelData.map[0].length][LevelData.map[0][0].length];
+                for (int m = 0; m < CopyMap.length; m++)
+                    for (int n = 0; n < CopyMap[0].length; n++) {
+                        CopyMap[m][n] = map[m][n];
+                    }
+                CopyMap[secondY][secondX] = 0;
+                if (map[Y][X] == map[secondY][secondX]) {
+                    if(blocks.get(j).isConnect(CopyMap, secondX, secondY, secondX, secondY, 0))
+                        return true;
+                }
+            }
+        return false;
+    }
+
 
     public void gameOver(){
         frame.remove(this);
@@ -210,7 +268,6 @@ public class Level extends JPanel {
         super.paintComponent(g);
         g.drawImage(background,0,40,Game.WIDTH,Game.HEIGHT-40,null);
         for(int i=0;i<connectLines.size();i++){
-            //todo : 绘制连线
             connectLines.get(i).drawSelf(g);
         }
     }
@@ -227,10 +284,7 @@ public class Level extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            frame.remove(level);
-            level.timer.cancel();
-            frame.add(new GameOverBoundary(frame,score));
-            frame.setVisible(true);
+            level.gameOver();
         }
     }
 }
