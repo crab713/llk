@@ -2,6 +2,7 @@ package prop;
 
 import block.Block;
 import level.Level;
+import utils.MusicStuff;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -16,7 +17,7 @@ public class Boom extends BaseProp {
         super(level);
         name = "炸弹";
         try {
-            image = ImageIO.read(new File("images/background/Background01.jpg"));
+            image = ImageIO.read(new File("images/prop/Boom-1.jpg"));
         }catch (Exception var1){
             var1.printStackTrace();
         }
@@ -36,6 +37,8 @@ public class Boom extends BaseProp {
             if(level.map[block.getMapY()][block.getMapX()] == level.map[block1.getMapY()][block1.getMapX()]){
                 block.delete();
                 block1.delete();
+                MusicStuff MS=new MusicStuff();
+                MS.playOnce("music/Boom.wav");
                 return;
             }
         }

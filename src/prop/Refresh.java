@@ -2,6 +2,7 @@ package prop;
 
 import block.Block;
 import level.Level;
+import utils.MusicStuff;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -15,7 +16,7 @@ public class Refresh extends BaseProp {
         super(level);
         name = "重列";
         try {
-            image = ImageIO.read(new File("images/background/Background01.jpg"));
+            image = ImageIO.read(new File("images/prop/Refresh-1.jpg"));
         }catch (Exception var1){
             var1.printStackTrace();
         }
@@ -25,6 +26,8 @@ public class Refresh extends BaseProp {
     public void run() {
         super.run();
         Random random=new Random();
+        MusicStuff MS=new MusicStuff();
+        MS.playOnce("music/Refresh.wav");
         for(int i=0;i<level.blocks.size();i++){
             Block block1 = level.blocks.get(random.nextInt(level.blocks.size()));
             Block block2 = level.blocks.get(random.nextInt(level.blocks.size()));

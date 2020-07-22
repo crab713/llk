@@ -16,7 +16,7 @@ public class StartBoundary extends BaseBoundary {
 
 	public StartBoundary(JFrame frame) {
 		super(frame);
-		background = new ImageIcon("images/background/bg.png");
+		background = new ImageIcon("images/game_bg/g-bg1.png");
 		block1 = new ImageIcon("images/block1.png");
 		block2 = new ImageIcon("images/block2.png");
 		block3 = new ImageIcon("images/block3.png");
@@ -78,6 +78,11 @@ class MyActionListener implements ActionListener{
         	boundary.frame.add(new History(boundary.frame));
             boundary.frame.setVisible(true);
         }
+		if("设置".equals(e.getActionCommand())){
+			boundary.frame.remove(boundary);
+			boundary.frame.add(new SettingBoundary(boundary.frame));
+			boundary.frame.setVisible(true);
+		}
     }
 }
 }

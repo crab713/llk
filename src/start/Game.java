@@ -2,6 +2,7 @@ package start;
 
 import boundary.StartBoundary;
 import level.Level;
+import utils.MusicStuff;
 
 import javax.swing.*;
 
@@ -14,6 +15,9 @@ public class Game extends JFrame {
         setSize(WIDTH,HEIGHT);
 
         add(new StartBoundary(this));
+
+        MusicStuff MS=new MusicStuff();
+        MS.play("music/bgm.wav");
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

@@ -55,11 +55,8 @@ public class Block extends JButton {
         super.paintComponent(g);
     }
 
-    public void drawConnect(int state,int x,int y){
-
-    }
-
     public boolean isConnect(int[][] copyMap,int beforeX,int beforeY,int x,int y,int inflection){
+        ConnectLine line;
         if(x==mapX && y==mapY){
             return true;
         }
@@ -70,12 +67,20 @@ public class Block extends JButton {
             copyMap[y][x] = -1;
             if(beforeX == x){
                 if(inflection<=1 && isConnect(copyMap,x,y,x+1,y,inflection+(beforeY==y?0:1))){
+                    line = new ConnectLine(level,y>beforeY?5:2,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else if(inflection<=1 && isConnect(copyMap,x,y,x-1,y,inflection+(beforeY==y?0:1))){
+                    line = new ConnectLine(level,y>beforeY?3:4,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else if(inflection<=2 && beforeY != y+1 && isConnect(copyMap,x,y,x,y+1,inflection)){
+                    line = new ConnectLine(level,0,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else if(inflection<=2 && beforeY != y-1 && isConnect(copyMap,x,y,x,y-1,inflection)){
+                    line = new ConnectLine(level,0,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else {
                     copyMap[y][x]=0;
@@ -83,12 +88,20 @@ public class Block extends JButton {
             }
             if(beforeY == y){
                 if(inflection<=2 && beforeX != x+1 && isConnect(copyMap,x,y,x+1,y,inflection)){
+                    line = new ConnectLine(level,1,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else if(inflection<=2 && beforeX != x-1 && isConnect(copyMap,x,y,x-1,y,inflection)){
+                    line = new ConnectLine(level,1,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else if(inflection<=1 && isConnect(copyMap,x,y,x,y+1,inflection+(beforeX==x?0:1))){
+                    line = new ConnectLine(level,x>beforeX?4:2,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else if(inflection<=1 && isConnect(copyMap,x,y,x,y-1,inflection+(beforeX==x?0:1))){
+                    line = new ConnectLine(level,x>beforeX?3:5,x,y);
+                    level.connectLines.add(line);
                     return true;
                 }else {
                     copyMap[y][x]=0;
@@ -142,7 +155,6 @@ class MyMouseAdapter extends MouseAdapter {
             block.level.block = block;
             block.setEnabled(false);
         }else {
-            // TODO : 被选中后变亮或回调
             // 如果两次点击均为相同方块时，则取消选中
             if(block.equals(block.level.block)){
                 block.level.block = null;
@@ -159,8 +171,10 @@ class MyMouseAdapter extends MouseAdapter {
             CopyMap[secondY][secondX]=0;
             if(block.level.map[block.mapY][block.mapX] == block.level.map[secondY][secondX])
                 if(block.isConnect(CopyMap,secondX,secondY,secondX,secondY,0)){
+                    block.level.connectLines.remove(block.level.connectLines.size()-1);
                 //两个都删
                 block.level.score += 10;
+                // 特殊方块
                 if(block.level.map[block.mapY][block.mapX] == 101){
                     block.level.addTime.addCount();
                 }

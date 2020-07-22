@@ -14,7 +14,7 @@ public class ChooseLevelBoundary extends BaseBoundary {
 
 	public ChooseLevelBoundary(JFrame frame) {
 		super(frame);
-		background = new ImageIcon("images/background/bg.png");
+		background = new ImageIcon("images/level/level-bg.png");
 		block4 = new ImageIcon("images/block4.png");
 		block5 = new ImageIcon("images/block5.png");
 

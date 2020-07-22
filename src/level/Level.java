@@ -1,6 +1,7 @@
 package level;
 
 import block.Block;
+import block.ConnectLine;
 import boundary.GameOverBoundary;
 import prop.AddTime;
 import prop.Boom;
@@ -30,8 +31,9 @@ public class Level extends JPanel {
     JFrame frame;
     public Block block;
     public ArrayList<Block> blocks=new ArrayList<>();
+    public ArrayList<ConnectLine> connectLines=new ArrayList<>();
     Timer timer;
-    int time=120*1000; //初始时长
+    final int time=120*1000; //初始时长
     public int surplusTime=time; //剩余时长
     public int totalTime=0; //总共花费的时长
     public int[][] map;
@@ -44,14 +46,17 @@ public class Level extends JPanel {
     public AddTime addTime;
 
     private static BufferedImage background;
-    static BufferedImage[] blockImages=new BufferedImage[1];
+    static BufferedImage[] blockImages=new BufferedImage[36];
     static BufferedImage timeImage;
-    // TODO : 图片资源
+    public static BufferedImage[] lineImages=new BufferedImage[6];
     static {
         try {
-            background = ImageIO.read(new File("images/background/Background01.jpg"));
+            background = ImageIO.read(new File("images/game_bg/g-bg1.png"));
             for(int i=0;i<blockImages.length;i++){
-                blockImages[i] = ImageIO.read(new File("images/block/block"+i+".jpg"));
+                blockImages[i] = ImageIO.read(new File("images/block/block"+i+".png"));
+            }
+            for(int i=0;i<lineImages.length;i++){
+                lineImages[i] = ImageIO.read(new File("images/line/line"+i+".png"));
             }
             timeImage = ImageIO.read(new File("images/level/time.png"));
         }catch (Exception var1){
@@ -106,12 +111,12 @@ public class Level extends JPanel {
         surplus.setText("剩余方块： "+blocks.size());
         add(surplus);
 
+        // 初始化地图
         map = new int[LevelData.map[0].length][LevelData.map[0][0].length];
         for(int i=0;i<map.length;i++)
             for (int j=0;j<map[0].length;j++){
                 map[i][j]=LevelData.map[level-1][i][j];
             }
-
         try {
             initBlock(LevelData.initBlockKind[level-1]);
         }catch (Exception e){
@@ -122,7 +127,8 @@ public class Level extends JPanel {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                surplusTime--;
+                surplusTime-=10;
+                totalTime+=10;
                 if (surplusTime <= time){
                     countdown.setSize(500*surplusTime/time,20);
                 }else {
@@ -130,11 +136,13 @@ public class Level extends JPanel {
                 }
                 surplus.setText("剩余方块： "+blocks.size());
                 scoreLabel.setText("得分： "+score);
+                repaint();
                 if (surplusTime<=0 || blocks.size()==0){
                     gameOver();
                 }
+
             }
-        },100L,1L);
+        },100L,10L);
     }
 
     /**
@@ -201,6 +209,10 @@ public class Level extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(background,0,40,Game.WIDTH,Game.HEIGHT-40,null);
+        for(int i=0;i<connectLines.size();i++){
+            //todo : 绘制连线
+            connectLines.get(i).drawSelf(g);
+        }
     }
 
     /**
