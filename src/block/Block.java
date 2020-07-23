@@ -242,7 +242,11 @@ class MyMouseAdapter extends MouseAdapter {
                     block.delete();
                     if (!block.level.checkConnection()){
                         Refresh refresh=new Refresh(block.level);
-                        refresh.run();
+                        if(Game.isPlay){
+                            Game.isPlay = false;
+                            refresh.run();
+                            Game.isPlay = true;
+                        }
                     }
                 }
             }

@@ -13,13 +13,14 @@ public class Game extends JFrame {
 
     public static MusicStuff MS=new MusicStuff();
     Game(){
-        super("flying shoot");
+        super("连连看");
         setSize(WIDTH,HEIGHT);
 
         add(new StartBoundary(this));
 
         MS.play("music/bgm.wav");
 
+        setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);

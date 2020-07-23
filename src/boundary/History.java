@@ -34,6 +34,7 @@ public class History extends BaseBoundary {
     @Override
     public void paintComponent(Graphics g) {
 	    g.drawImage(block6.getImage(), 0, 0, null);
+		g.setColor(Color.PINK);
     	g.setFont(new Font("微软雅黑", Font.PLAIN, 30));
 	    g.drawString("第1关： "+ RankIOUtil.readOneLevel(1)+"分", 150, 50);
 	    g.drawString("第2关： "+ RankIOUtil.readOneLevel(2)+"分", 150, 150);

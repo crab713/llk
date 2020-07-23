@@ -4,7 +4,7 @@ import java.io.*;
 import java.sql.Struct;
 
 public class RankIOUtil {
-    private static File file = new File("src/level/levelScore.txt");
+    private static File file = new File("src/level/levelScore.dat");
     /**
      * 读取某一关的最高分数
      * @param level 要读取的关卡数据
